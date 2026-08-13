@@ -1,9 +1,30 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { updateSession } from './lib/supabase/middleware'
 
+const protectedPrefixes = ['/dashboard', '/assessment', '/session', '/account']
+const authRoutes = ['/login', '/register', '/forgot-password', '/reset-password']
+
 export async function middleware(request: NextRequest) {
-  return updateSession(request)
+  const { response, user } = await updateSession(request)
+
+  const { pathname } = request.nextUrl
+
+  // If user is NOT authenticated and path starts with a protected prefix, redirect to /login
+  if (!user && protectedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = '/login'
+    return NextResponse.redirect(loginUrl)
+  }
+
+  // If user IS authenticated and path starts with an auth route, redirect to /dashboard
+  if (user && authRoutes.some((route) => pathname.startsWith(route))) {
+    const dashboardUrl = request.nextUrl.clone()
+    dashboardUrl.pathname = '/dashboard'
+    return NextResponse.redirect(dashboardUrl)
+  }
+
+  return response
 }
 
 export const config = {
