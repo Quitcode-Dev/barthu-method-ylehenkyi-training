@@ -3,21 +3,28 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
-export async function register(formData: {
-  email: string
-  password: string
-  first_name: string
-  last_name: string
-}): Promise<{ error: string }> {
+interface RegisterState {
+  error?: string
+}
+
+export async function register(
+  _prevState: RegisterState,
+  formData: FormData
+): Promise<RegisterState> {
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const first_name = formData.get('first_name') as string
+  const last_name = formData.get('last_name') as string
+
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signUp({
-    email: formData.email,
-    password: formData.password,
+    email,
+    password,
     options: {
       data: {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+        first_name,
+        last_name,
       },
     },
   })
