@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, unstable_rethrow } from 'next/navigation'
 
 import { ASSESSMENT_QUESTIONS } from '@/lib/assessment/questions'
 import type { AssessmentResponse, AssessmentResponseMap } from '@/lib/assessment/types'
@@ -76,7 +76,10 @@ export default function AssessmentPage() {
     localStorage.removeItem(STORAGE_KEY)
     try {
       await submitAssessment(responseArray)
-    } catch {
+    } catch (error) {
+      // Re-throw Next.js internal errors (e.g. NEXT_REDIRECT) so they
+      // are not accidentally swallowed by this catch block.
+      unstable_rethrow(error)
       // If submission failed (not a redirect), restore progress so
       // the user can retry without losing their answers.
       localStorage.setItem(STORAGE_KEY, JSON.stringify(responses))
