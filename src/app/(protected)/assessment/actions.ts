@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 import type { AssessmentResponse } from '@/lib/assessment/types'
+import { assignPathway } from '@/lib/assessment/pathway-logic'
 
 export async function submitAssessment(responses: AssessmentResponse) {
   const supabase = await createClient()
@@ -16,15 +17,33 @@ export async function submitAssessment(responses: AssessmentResponse) {
     redirect('/login')
   }
 
-  const { error } = await supabase.from('assessments').insert({
+  // Store assessment responses with version tracking
+  const { error: assessmentError } = await supabase.from('assessments').insert({
     user_id: user.id,
-    responses,
+    version: 1,
+    responses: JSON.stringify(responses),
     completed_at: new Date().toISOString(),
   })
 
-  if (error) {
+  if (assessmentError) {
     throw new Error('Failed to save assessment')
   }
 
-  redirect('/dashboard')
+  // Determine pathway assignment based on responses
+  const pathwayId = assignPathway(responses)
+
+  // Create user program linking user to their assigned pathway
+  const { error: programError } = await supabase.from('user_programs').insert({
+    user_id: user.id,
+    pathway_id: pathwayId,
+    status: 'active',
+    assigned_at: new Date().toISOString(),
+  })
+
+  if (programError) {
+    throw new Error('Failed to assign pathway')
+  }
+
+  // Redirect with cleared=1 so the client component can clear localStorage
+  redirect('/dashboard?cleared=1')
 }
