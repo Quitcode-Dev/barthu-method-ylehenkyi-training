@@ -67,13 +67,19 @@ export default function AssessmentPage() {
   const handleSubmit = useCallback(async () => {
     if (!hasAnswer || isSubmitting) return
     setIsSubmitting(true)
+    const responseArray: AssessmentResponse[] = Object.entries(responses).map(
+      ([questionId, value]) => ({ questionId, value })
+    )
+    // Clear localStorage before calling the server action because
+    // redirect() in the server action throws a special NEXT_REDIRECT
+    // error that prevents any code after `await` from executing.
+    localStorage.removeItem(STORAGE_KEY)
     try {
-      const responseArray: AssessmentResponse[] = Object.entries(responses).map(
-        ([questionId, value]) => ({ questionId, value })
-      )
       await submitAssessment(responseArray)
-      localStorage.removeItem(STORAGE_KEY)
     } catch {
+      // If submission failed (not a redirect), restore progress so
+      // the user can retry without losing their answers.
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(responses))
       setIsSubmitting(false)
     }
   }, [hasAnswer, isSubmitting, responses])
