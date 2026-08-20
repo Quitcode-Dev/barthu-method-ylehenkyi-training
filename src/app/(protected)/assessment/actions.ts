@@ -3,10 +3,10 @@
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
-import type { AssessmentResponse } from '@/lib/assessment/types'
 import { assignPathway } from '@/lib/assessment/pathway-logic'
+import type { AssessmentResponseMap } from '@/lib/assessment/types'
 
-export async function submitAssessment(responses: AssessmentResponse) {
+export async function submitAssessment(responses: AssessmentResponseMap) {
   const supabase = await createClient()
   const {
     data: { user },

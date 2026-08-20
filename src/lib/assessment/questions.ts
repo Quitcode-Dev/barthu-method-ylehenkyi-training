@@ -4,7 +4,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   {
     id: 'pain_location',
     text: 'Where do you experience pain or discomfort?',
-    type: 'single-select',
+    type: 'single_choice',
     dimension: 'pain',
     options: [
       { value: 'neck', label: 'Neck' },
@@ -23,7 +23,6 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     options: Array.from({ length: 10 }, (_, i) => ({
       value: String(i + 1),
       label: String(i + 1),
-      score: i + 1,
     })),
   },
   {
@@ -34,25 +33,22 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     options: Array.from({ length: 10 }, (_, i) => ({
       value: String(i + 1),
       label: String(i + 1),
-      score: i + 1,
     })),
   },
   {
     id: 'sleep_quality',
     text: 'How would you rate your sleep quality?',
-    type: 'single-select',
+    type: 'scale',
     dimension: 'sleep',
-    options: [
-      { value: 'poor', label: 'Poor', score: 1 },
-      { value: 'fair', label: 'Fair', score: 2 },
-      { value: 'good', label: 'Good', score: 3 },
-      { value: 'excellent', label: 'Excellent', score: 4 },
-    ],
+    options: Array.from({ length: 10 }, (_, i) => ({
+      value: String(i + 1),
+      label: String(i + 1),
+    })),
   },
   {
     id: 'available_time',
     text: 'How much time do you have available for your session?',
-    type: 'single-select',
+    type: 'single_choice',
     dimension: 'time',
     options: [
       { value: '10min', label: '10 minutes' },
@@ -64,7 +60,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   {
     id: 'primary_goal',
     text: 'What is your primary goal?',
-    type: 'single-select',
+    type: 'single_choice',
     dimension: 'goal',
     options: [
       { value: 'pain_relief', label: 'Pain Relief' },
@@ -75,15 +71,14 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     ],
   },
   {
-    id: 'activity_level',
-    text: 'How would you describe your current activity level?',
-    type: 'single-select',
-    dimension: 'activity',
+    id: 'exercise_experience',
+    text: 'How would you describe your exercise experience?',
+    type: 'single_choice',
+    dimension: 'experience',
     options: [
-      { value: 'sedentary', label: 'Sedentary' },
-      { value: 'lightly_active', label: 'Lightly Active' },
-      { value: 'moderately_active', label: 'Moderately Active' },
-      { value: 'very_active', label: 'Very Active' },
+      { value: 'beginner', label: 'Beginner' },
+      { value: 'intermediate', label: 'Intermediate' },
+      { value: 'advanced', label: 'Advanced' },
     ],
   },
 ];

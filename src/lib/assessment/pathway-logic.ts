@@ -1,4 +1,4 @@
-import type { AssessmentResponse } from './types';
+import type { AssessmentResponseMap } from './types';
 
 // ---------------------------------------------------------------------------
 // Pathway ID constants
@@ -32,7 +32,7 @@ const LOWER_BODY_LOCATIONS = new Set(['hip', 'knee']);
  *  4. primary_goal === 'mobility'          → MOBILITY_RESTORATION
  *  5. Default (including 'general_wellness' and any unknown value) → GENERAL_WELLNESS
  */
-export function assignPathway(responses: AssessmentResponse): string {
+export function assignPathway(responses: AssessmentResponseMap): string {
   const primaryGoal = responses.primary_goal;
 
   if (primaryGoal === 'pain_relief') {

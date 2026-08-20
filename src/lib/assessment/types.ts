@@ -1,9 +1,10 @@
-export type QuestionType = 'single-select' | 'scale';
+export type QuestionType = 'single_choice' | 'scale';
+
+export type Dimension = 'pain' | 'stress' | 'sleep' | 'time' | 'goal' | 'experience';
 
 export type QuestionOption = {
   value: string;
   label: string;
-  score?: number;
 };
 
 export type AssessmentQuestion = {
@@ -11,7 +12,13 @@ export type AssessmentQuestion = {
   text: string;
   type: QuestionType;
   options: QuestionOption[];
-  dimension: string;
+  dimension: Dimension;
 };
 
-export type AssessmentResponse = Record<string, string>;
+export type AssessmentResponse = {
+  questionId: string;
+  value: string;
+};
+
+/** A convenience alias used at runtime: maps question ID → selected value. */
+export type AssessmentResponseMap = Record<string, string>;
