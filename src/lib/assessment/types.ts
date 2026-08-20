@@ -1,9 +1,8 @@
-export type QuestionType = 'single-select' | 'scale';
+export type QuestionType = 'single_choice' | 'scale';
 
 export type QuestionOption = {
   value: string;
   label: string;
-  score?: number;
 };
 
 export type AssessmentQuestion = {
@@ -14,4 +13,7 @@ export type AssessmentQuestion = {
   dimension: string;
 };
 
-export type AssessmentResponse = Record<string, string>;
+export type AssessmentResponse = {
+  questionId: string;
+  value: string;
+};
