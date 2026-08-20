@@ -4,8 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { ASSESSMENT_QUESTIONS } from '@/lib/assessment/questions'
-/** Map of question ID → selected value for tracking progress through the assessment. */
-type ResponseMap = Record<string, string>
+import type { AssessmentResponseMap } from '@/lib/assessment/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { submitAssessment } from './actions'
@@ -15,7 +14,7 @@ const STORAGE_KEY = 'assessment_progress'
 export default function AssessmentPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
-  const [responses, setResponses] = useState<ResponseMap>({})
+  const [responses, setResponses] = useState<AssessmentResponseMap>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -29,7 +28,7 @@ export default function AssessmentPage() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
       if (saved) {
-        const parsed = JSON.parse(saved) as ResponseMap
+        const parsed = JSON.parse(saved) as AssessmentResponseMap
         setResponses(parsed)
       }
     } catch {

@@ -4,8 +4,9 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 import { assignPathway } from '@/lib/assessment/pathway-logic'
+import type { AssessmentResponseMap } from '@/lib/assessment/types'
 
-export async function submitAssessment(responses: Record<string, string>) {
+export async function submitAssessment(responses: AssessmentResponseMap) {
   const supabase = await createClient()
   const {
     data: { user },
