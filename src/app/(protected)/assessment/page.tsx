@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { ASSESSMENT_QUESTIONS } from '@/lib/assessment/questions'
-import type { AssessmentResponseMap } from '@/lib/assessment/types'
+import type { AssessmentResponse, AssessmentResponseMap } from '@/lib/assessment/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { submitAssessment } from './actions'
@@ -68,7 +68,10 @@ export default function AssessmentPage() {
     if (!hasAnswer || isSubmitting) return
     setIsSubmitting(true)
     try {
-      await submitAssessment(responses)
+      const responseArray: AssessmentResponse[] = Object.entries(responses).map(
+        ([questionId, value]) => ({ questionId, value })
+      )
+      await submitAssessment(responseArray)
       localStorage.removeItem(STORAGE_KEY)
     } catch {
       setIsSubmitting(false)
