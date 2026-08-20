@@ -1,5 +1,7 @@
 export type QuestionType = 'single_choice' | 'scale';
 
+export type Dimension = 'pain' | 'stress' | 'sleep' | 'time' | 'goal' | 'experience';
+
 export type QuestionOption = {
   value: string;
   label: string;
@@ -10,7 +12,7 @@ export type AssessmentQuestion = {
   text: string;
   type: QuestionType;
   options: QuestionOption[];
-  dimension: string;
+  dimension: Dimension;
 };
 
 export type AssessmentResponse = {
