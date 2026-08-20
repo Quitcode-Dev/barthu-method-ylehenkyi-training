@@ -21,9 +21,16 @@ export default function ForgotPasswordPage() {
     event.preventDefault()
     setError(null)
     setSuccess(false)
+
+    const trimmed = email.trim()
+    if (!trimmed) {
+      setError('Please enter your email address')
+      return
+    }
+
     setIsSubmitting(true)
 
-    const result = await resetPassword({ email: email.trim() })
+    const result = await resetPassword({ email: trimmed })
 
     if (result?.error) {
       setError(result.error)
@@ -52,22 +59,25 @@ export default function ForgotPasswordPage() {
           </Alert>
         ) : null}
 
-        <form className='space-y-4' onSubmit={onSubmit}>
-          <div>
-            <Label htmlFor='email'>Email</Label>
-            <Input
-              id='email'
-              name='email'
-              type='email'
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </div>
+        {!success ? (
+          <form className='space-y-4' onSubmit={onSubmit}>
+            <div>
+              <Label htmlFor='email'>Email</Label>
+              <Input
+                id='email'
+                name='email'
+                type='email'
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </div>
 
-          <Button type='submit' className='w-full' disabled={isSubmitting}>
-            {isSubmitting ? 'Sending...' : 'Send Reset Link'}
-          </Button>
-        </form>
+            <Button type='submit' className='w-full' disabled={isSubmitting}>
+              {isSubmitting ? 'Sending...' : 'Send Reset Link'}
+            </Button>
+          </form>
+        ) : null}
 
         <p className='text-sm mt-4 text-center'>
           Remember your password?{' '}

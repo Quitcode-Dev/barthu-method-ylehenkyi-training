@@ -85,6 +85,7 @@ export default function ResetPasswordPage() {
               id='new_password'
               name='new_password'
               type='password'
+              required
               value={values.new_password}
               onChange={(event) =>
                 setValues((previous) => ({ ...previous, new_password: event.target.value }))
@@ -101,6 +102,7 @@ export default function ResetPasswordPage() {
               id='confirm_password'
               name='confirm_password'
               type='password'
+              required
               value={values.confirm_password}
               onChange={(event) =>
                 setValues((previous) => ({ ...previous, confirm_password: event.target.value }))
