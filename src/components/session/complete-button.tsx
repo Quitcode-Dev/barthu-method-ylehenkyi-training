@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { completeSession } from '@/app/(protected)/session/actions'
-import { FeedbackModal } from '@/components/session/feedback-modal'
+import { FeedbackForm } from '@/components/feedback/feedback-form'
 
 interface CompleteButtonProps {
   exerciseId: string
@@ -26,8 +26,11 @@ export function CompleteButton({ exerciseId, isCompleted }: CompleteButtonProps)
     })
   }
 
-  function handleFeedbackClose() {
-    setShowFeedback(false)
+  function handleFeedbackComplete() {
+    router.push('/dashboard')
+  }
+
+  function handleFeedbackSkip() {
     router.push('/dashboard')
   }
 
@@ -44,22 +47,26 @@ export function CompleteButton({ exerciseId, isCompleted }: CompleteButtonProps)
 
   return (
     <>
-      <Button
-        variant="default"
-        className="w-full mt-6 py-6 text-lg"
-        onClick={handleClick}
-        disabled={isPending}
-      >
-        {isPending ? 'Completing…' : 'Mark as Complete'}
-      </Button>
+      {!showFeedback && (
+        <Button
+          variant="default"
+          className="w-full mt-6 py-6 text-lg"
+          onClick={handleClick}
+          disabled={isPending}
+        >
+          {isPending ? 'Completing…' : 'Mark as Complete'}
+        </Button>
+      )}
 
       {showFeedback && sessionLogId && (
-        <FeedbackModal
-          isOpen={showFeedback}
-          onClose={handleFeedbackClose}
-          exerciseId={exerciseId}
-          sessionLogId={sessionLogId}
-        />
+        <div className="mt-6">
+          <FeedbackForm
+            sessionId={sessionLogId}
+            exerciseId={exerciseId}
+            onComplete={handleFeedbackComplete}
+            onSkip={handleFeedbackSkip}
+          />
+        </div>
       )}
     </>
   )
