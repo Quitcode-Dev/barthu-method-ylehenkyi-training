@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { submitFeedback, skipFeedback } from '@/app/(protected)/session/feedback-actions'
+import { submitFeedback, skipFeedback } from '@/app/(protected)/exercises/actions'
 
 interface FeedbackModalProps {
   isOpen: boolean

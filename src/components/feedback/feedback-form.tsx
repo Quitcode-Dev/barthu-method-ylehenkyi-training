@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { submitFeedback, skipFeedback } from '@/app/(protected)/session/feedback-actions'
+import { submitFeedback, skipFeedback } from '@/app/(protected)/exercises/actions'
 
 interface FeedbackFormProps {
   sessionId: string
