@@ -1,19 +1,14 @@
 /**
- * Pathway mapper — provides mapping from assessment responses to pathway IDs.
+ * Pathway mapper — maps Phase 1 assessment responses to pathway IDs (US-002).
  *
  * Exports:
- *  - `mapToPathway(responses)` — spec-defined mapper (US-002) that accepts
- *    an array of `AssessmentResponse` and returns a pathway ID string.
- *  - `assignPathway(responseMap)` — legacy mapper that accepts a flat
- *    `AssessmentResponseMap` (retained for backward-compatibility).
+ *  - `mapToPathway(responses)` — accepts an array of `AssessmentResponse`
+ *    objects and returns a pathway ID string.
  */
 
 import type { AssessmentResponse, AssessmentResponseMap } from './types';
 import { PATHWAYS } from './pathways';
 import type { PathwayId } from './pathways';
-
-// Re-export legacy mapper for existing consumers
-export { assignPathway } from './pathway-logic';
 
 // ---------------------------------------------------------------------------
 // helpers
