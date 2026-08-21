@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 
-export async function completeSession(exerciseId: string) {
+export async function completeSession(exerciseId: string): Promise<{ sessionLogId: string }> {
   const supabase = await createClient()
 
   const {
@@ -16,15 +16,15 @@ export async function completeSession(exerciseId: string) {
     redirect('/login')
   }
 
-  const { error } = await supabase.from('session_logs').insert({
+  const { data, error } = await supabase.from('session_logs').insert({
     user_id: user.id,
     exercise_id: exerciseId,
     completed_at: new Date().toISOString(),
-  })
+  }).select('id').single()
 
-  if (error) {
-    throw new Error(`Failed to log session: ${error.message}`)
+  if (error || !data) {
+    throw new Error(`Failed to log session: ${error?.message ?? 'No data returned'}`)
   }
 
-  redirect('/dashboard')
+  return { sessionLogId: data.id }
 }
