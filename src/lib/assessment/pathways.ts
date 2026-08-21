@@ -1,12 +1,3 @@
-import {
-  PATHWAY_PAIN_RELIEF_UPPER,
-  PATHWAY_PAIN_RELIEF_LOWER,
-  PATHWAY_STRESS_REDUCTION as PATHWAY_STRESS_REDUCTION_INTERNAL,
-  PATHWAY_SLEEP_IMPROVEMENT as PATHWAY_SLEEP_IMPROVEMENT_INTERNAL,
-  PATHWAY_MOBILITY_RESTORATION as PATHWAY_MOBILITY_RESTORATION_INTERNAL,
-  PATHWAY_GENERAL_WELLNESS as PATHWAY_GENERAL_WELLNESS_INTERNAL,
-} from './pathway-logic';
-
 // ---------------------------------------------------------------------------
 // Spec-defined pathway ID constants (US-002)
 // ---------------------------------------------------------------------------
@@ -18,6 +9,9 @@ export const PATHWAYS = {
   MOBILITY_RESTORATION: 'mobility-restoration',
   GENERAL_WELLNESS: 'general-wellness',
 } as const;
+
+/** Union type of all valid pathway ID values. */
+export type PathwayId = (typeof PATHWAYS)[keyof typeof PATHWAYS];
 
 // ---------------------------------------------------------------------------
 // Human-readable pathway details (US-002)
@@ -56,45 +50,57 @@ export const PATHWAY_DETAILS: Record<string, { name: string; description: string
 // ---------------------------------------------------------------------------
 // Legacy pathway metadata (retained for backward-compatibility)
 // ---------------------------------------------------------------------------
+
+/**
+ * Metadata shape used by the legacy pathway system.
+ *
+ * @deprecated Prefer `PATHWAYS` for pathway IDs and `PATHWAY_DETAILS` for
+ *   human-readable names/descriptions.
+ */
 export type PathwayMeta = {
   id: string;
   name: string;
   description: string;
 };
 
+/**
+ * Legacy pathway metadata keyed by the old pathway-logic IDs.
+ *
+ * @deprecated Use `PATHWAY_DETAILS` keyed by `PATHWAYS.*` constants instead.
+ */
 export const PATHWAY_META: Record<string, PathwayMeta> = {
-  [PATHWAY_PAIN_RELIEF_UPPER]: {
-    id: PATHWAY_PAIN_RELIEF_UPPER,
+  pathway_pain_relief_upper: {
+    id: 'pathway_pain_relief_upper',
     name: 'Upper Body Pain Relief',
     description:
       'A targeted program for neck, shoulder, and back pain recovery.',
   },
-  [PATHWAY_PAIN_RELIEF_LOWER]: {
-    id: PATHWAY_PAIN_RELIEF_LOWER,
+  pathway_pain_relief_lower: {
+    id: 'pathway_pain_relief_lower',
     name: 'Lower Body Pain Relief',
     description:
       'A targeted program for hip and knee pain recovery.',
   },
-  [PATHWAY_STRESS_REDUCTION_INTERNAL]: {
-    id: PATHWAY_STRESS_REDUCTION_INTERNAL,
+  pathway_stress_reduction: {
+    id: 'pathway_stress_reduction',
     name: 'Stress Reduction',
     description:
       'Breathing exercises and gentle movements designed to lower stress levels.',
   },
-  [PATHWAY_SLEEP_IMPROVEMENT_INTERNAL]: {
-    id: PATHWAY_SLEEP_IMPROVEMENT_INTERNAL,
+  pathway_sleep_improvement: {
+    id: 'pathway_sleep_improvement',
     name: 'Sleep Improvement',
     description:
       'Relaxation techniques and routines to improve sleep quality.',
   },
-  [PATHWAY_MOBILITY_RESTORATION_INTERNAL]: {
-    id: PATHWAY_MOBILITY_RESTORATION_INTERNAL,
+  pathway_mobility_restoration: {
+    id: 'pathway_mobility_restoration',
     name: 'Mobility Restoration',
     description:
       'Progressive stretching and movement sequences to restore range of motion.',
   },
-  [PATHWAY_GENERAL_WELLNESS_INTERNAL]: {
-    id: PATHWAY_GENERAL_WELLNESS_INTERNAL,
+  pathway_general_wellness: {
+    id: 'pathway_general_wellness',
     name: 'General Wellness',
     description:
       'A balanced program promoting overall physical and mental well-being.',

@@ -8,11 +8,28 @@
  *    `AssessmentResponseMap` (retained for backward-compatibility).
  */
 
-import type { AssessmentResponse } from './types';
+import type { AssessmentResponse, AssessmentResponseMap } from './types';
 import { PATHWAYS } from './pathways';
+import type { PathwayId } from './pathways';
 
 // Re-export legacy mapper for existing consumers
 export { assignPathway } from './pathway-logic';
+
+// ---------------------------------------------------------------------------
+// helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Converts an array of `AssessmentResponse` objects into a flat lookup map
+ * keyed by `questionId`. This allows O(1) access to individual answers.
+ */
+function toResponseMap(responses: AssessmentResponse[]): AssessmentResponseMap {
+  const map: AssessmentResponseMap = {};
+  for (const r of responses) {
+    map[r.questionId] = r.value;
+  }
+  return map;
+}
 
 // ---------------------------------------------------------------------------
 // mapToPathway  (US-002)
@@ -32,16 +49,16 @@ export { assignPathway } from './pathway-logic';
  *
  * Every valid combination of responses maps to exactly one pathway.
  * The function always returns a non-null, non-undefined pathway ID.
+ *
+ * @param responses - Array of `{ questionId, value }` assessment answers.
+ * @returns A pathway ID string (one of the `PATHWAYS` constant values).
  */
-export function mapToPathway(responses: AssessmentResponse[]): string {
-  // Build a lookup map from questionId → value for easy access
-  const responseMap: Record<string, string> = {};
-  for (const r of responses) {
-    responseMap[r.questionId] = r.value;
-  }
+export function mapToPathway(responses: AssessmentResponse[]): PathwayId {
+  const responseMap = toResponseMap(responses);
 
   const primaryGoal = responseMap.primary_goal;
 
+  // --- Rule 1: pain_relief → location-specific pathway ---
   if (primaryGoal === 'pain_relief') {
     const painLocation = responseMap.pain_location;
     if (painLocation === 'neck') {
@@ -50,22 +67,25 @@ export function mapToPathway(responses: AssessmentResponse[]): string {
     if (painLocation === 'back') {
       return PATHWAYS.BACK_PAIN_RELIEF;
     }
-    // Any other pain location (shoulder, hip, knee, none, missing)
+    // Any other pain location (shoulder, hip, knee, none, or missing)
     return PATHWAYS.GENERAL_WELLNESS;
   }
 
+  // --- Rule 2: stress_reduction ---
   if (primaryGoal === 'stress_reduction') {
     return PATHWAYS.STRESS_REDUCTION;
   }
 
+  // --- Rule 3: sleep_improvement ---
   if (primaryGoal === 'sleep_improvement') {
     return PATHWAYS.SLEEP_IMPROVEMENT;
   }
 
+  // --- Rule 4: mobility ---
   if (primaryGoal === 'mobility') {
     return PATHWAYS.MOBILITY_RESTORATION;
   }
 
-  // Covers 'general_wellness' and any unrecognised / missing value
+  // --- Rule 5: fallback (covers 'general_wellness' and any unrecognised / missing value) ---
   return PATHWAYS.GENERAL_WELLNESS;
 }
