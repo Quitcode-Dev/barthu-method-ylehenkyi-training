@@ -3,10 +3,15 @@
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
-import { assignPathway } from '@/lib/assessment/pathway-logic'
-import type { AssessmentResponseMap } from '@/lib/assessment/types'
+import { assignPathway } from '@/lib/assessment/pathway-mapper'
+import type { AssessmentResponse, AssessmentResponseMap } from '@/lib/assessment/types'
 
-export async function submitAssessment(responses: AssessmentResponseMap) {
+/**
+ * Server action that receives assessment responses, stores them in the
+ * `assessments` table, determines the pathway assignment, inserts the
+ * assignment into `user_programs`, and redirects to `/dashboard`.
+ */
+export async function submitAssessment(responses: AssessmentResponse[]) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -14,14 +19,14 @@ export async function submitAssessment(responses: AssessmentResponseMap) {
   } = await supabase.auth.getUser()
 
   if (authError || !user) {
-    redirect('/login')
+    throw new Error('Unauthenticated')
   }
 
   // Store assessment responses with version tracking
   const { error: assessmentError } = await supabase.from('assessments').insert({
     user_id: user.id,
-    version: 1,
-    responses: JSON.stringify(responses),
+    responses: responses as unknown as Record<string, unknown>,
+    version: '1.0',
     completed_at: new Date().toISOString(),
   })
 
@@ -29,8 +34,14 @@ export async function submitAssessment(responses: AssessmentResponseMap) {
     throw new Error('Failed to save assessment')
   }
 
+  // Build a response map for the pathway mapper
+  const responseMap: AssessmentResponseMap = {}
+  for (const r of responses) {
+    responseMap[r.questionId] = r.value
+  }
+
   // Determine pathway assignment based on responses
-  const pathwayId = assignPathway(responses)
+  const pathwayId = assignPathway(responseMap)
 
   // Create user program linking user to their assigned pathway
   const { error: programError } = await supabase.from('user_programs').insert({
@@ -44,6 +55,5 @@ export async function submitAssessment(responses: AssessmentResponseMap) {
     throw new Error('Failed to assign pathway')
   }
 
-  // Redirect with cleared=1 so the client component can clear localStorage
-  redirect('/dashboard?cleared=1')
+  redirect('/dashboard')
 }

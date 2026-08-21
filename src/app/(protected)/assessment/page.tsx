@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, unstable_rethrow } from 'next/navigation'
 
 import { ASSESSMENT_QUESTIONS } from '@/lib/assessment/questions'
-import type { AssessmentResponseMap } from '@/lib/assessment/types'
+import type { AssessmentResponse, AssessmentResponseMap } from '@/lib/assessment/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { submitAssessment } from './actions'
@@ -67,10 +67,22 @@ export default function AssessmentPage() {
   const handleSubmit = useCallback(async () => {
     if (!hasAnswer || isSubmitting) return
     setIsSubmitting(true)
+    const responseArray: AssessmentResponse[] = Object.entries(responses).map(
+      ([questionId, value]) => ({ questionId, value })
+    )
+    // Clear localStorage before calling the server action because
+    // redirect() in the server action throws a special NEXT_REDIRECT
+    // error that prevents any code after `await` from executing.
+    localStorage.removeItem(STORAGE_KEY)
     try {
-      await submitAssessment(responses)
-      localStorage.removeItem(STORAGE_KEY)
-    } catch {
+      await submitAssessment(responseArray)
+    } catch (error) {
+      // Re-throw Next.js internal errors (e.g. NEXT_REDIRECT) so they
+      // are not accidentally swallowed by this catch block.
+      unstable_rethrow(error)
+      // If submission failed (not a redirect), restore progress so
+      // the user can retry without losing their answers.
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(responses))
       setIsSubmitting(false)
     }
   }, [hasAnswer, isSubmitting, responses])
