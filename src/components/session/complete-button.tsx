@@ -1,9 +1,11 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { completeSession } from '@/app/(protected)/session/actions'
+import { FeedbackModal } from '@/components/session/feedback-modal'
 
 interface CompleteButtonProps {
   exerciseId: string
@@ -12,11 +14,21 @@ interface CompleteButtonProps {
 
 export function CompleteButton({ exerciseId, isCompleted }: CompleteButtonProps) {
   const [isPending, startTransition] = useTransition()
+  const [showFeedback, setShowFeedback] = useState(false)
+  const [sessionLogId, setSessionLogId] = useState<string | null>(null)
+  const router = useRouter()
 
   function handleClick() {
     startTransition(async () => {
-      await completeSession(exerciseId)
+      const result = await completeSession(exerciseId)
+      setSessionLogId(result.sessionLogId)
+      setShowFeedback(true)
     })
+  }
+
+  function handleFeedbackClose() {
+    setShowFeedback(false)
+    router.push('/dashboard')
   }
 
   if (isCompleted) {
@@ -31,13 +43,24 @@ export function CompleteButton({ exerciseId, isCompleted }: CompleteButtonProps)
   }
 
   return (
-    <Button
-      variant="default"
-      className="w-full mt-6 py-6 text-lg"
-      onClick={handleClick}
-      disabled={isPending}
-    >
-      {isPending ? 'Completing…' : 'Mark as Complete'}
-    </Button>
+    <>
+      <Button
+        variant="default"
+        className="w-full mt-6 py-6 text-lg"
+        onClick={handleClick}
+        disabled={isPending}
+      >
+        {isPending ? 'Completing…' : 'Mark as Complete'}
+      </Button>
+
+      {showFeedback && sessionLogId && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          onClose={handleFeedbackClose}
+          exerciseId={exerciseId}
+          sessionLogId={sessionLogId}
+        />
+      )}
+    </>
   )
 }
