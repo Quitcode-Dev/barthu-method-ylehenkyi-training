@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PATHWAYS, PATHWAY_DETAILS } from '@/lib/assessment/pathways'
-import type { BodyArea, Exercise } from '@/lib/exercises/types'
+import type { BodyArea, Exercise, ExerciseTag } from '@/lib/exercises/types'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -205,8 +205,7 @@ export default function ExerciseForm({ exercise, action }: ExerciseFormProps) {
                     name={`tag_${key}`}
                     className="h-4 w-4 rounded border-gray-300"
                     defaultChecked={
-                      exercise?.tags?.[key as keyof typeof exercise.tags] ===
-                      true
+                      exercise?.tags?.[key as keyof ExerciseTag] === true
                     }
                   />
                   {label}

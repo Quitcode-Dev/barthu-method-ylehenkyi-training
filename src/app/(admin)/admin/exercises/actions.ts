@@ -136,6 +136,7 @@ export async function createExercise(
     action_type: 'create',
     entity_type: 'exercise',
     entity_id: inserted.id,
+    timestamp: new Date().toISOString(),
   })
 
   redirect('/admin/exercises')
@@ -167,6 +168,7 @@ export async function updateExercise(
     action_type: 'update',
     entity_type: 'exercise',
     entity_id: id,
+    timestamp: new Date().toISOString(),
   })
 
   redirect('/admin/exercises')
@@ -193,6 +195,7 @@ export async function toggleExerciseStatus(
     action_type: 'update',
     entity_type: 'exercise',
     entity_id: id,
+    timestamp: new Date().toISOString(),
   })
 
   return null
