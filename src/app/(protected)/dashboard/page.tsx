@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { ProgressCard } from '@/components/dashboard/progress-card'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -53,32 +54,17 @@ export default async function DashboardPage() {
   const totalExercises = exercises.length
   const completedCount = exercises.filter((e) => completedIds.has(e.id)).length
   const allCompleted = totalExercises > 0 && completedCount === totalExercises
-  const progressPercent =
-    totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Pathway overview card */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>{pathwayInfo.name}</CardTitle>
-          <CardDescription>{pathwayInfo.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Progress</span>
-            <span className="text-sm text-muted-foreground">
-              {completedCount}/{totalExercises} exercises completed
-            </span>
-          </div>
-          <div className="w-full bg-secondary rounded-full h-3">
-            <div
-              className="bg-primary h-3 rounded-full transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Progress card */}
+      <div className="mb-8">
+        <ProgressCard
+          totalExercises={totalExercises}
+          completedExercises={completedCount}
+          pathwayName={pathwayInfo.name}
+        />
+      </div>
 
       {/* All completed congratulations */}
       {allCompleted && (
