@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
-import { assignPathway } from '@/lib/assessment/pathway-logic'
+import { assignPathway } from '@/lib/assessment/pathway-mapper'
 import type { AssessmentResponse, AssessmentResponseMap } from '@/lib/assessment/types'
 
 /**
