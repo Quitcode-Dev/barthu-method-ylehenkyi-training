@@ -1,8 +1,11 @@
 import type { AssessmentQuestion } from './types';
 
+export const ASSESSMENT_VERSION = '1.0';
+
 export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   {
     id: 'pain_location',
+    order: 1,
     text: 'Where do you experience pain or discomfort?',
     type: 'single_choice',
     dimension: 'pain',
@@ -17,6 +20,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 'pain_intensity',
+    order: 2,
     text: 'How would you rate your pain intensity?',
     type: 'scale',
     dimension: 'pain',
@@ -27,6 +31,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 'stress_level',
+    order: 3,
     text: 'How would you rate your current stress level?',
     type: 'scale',
     dimension: 'stress',
@@ -37,16 +42,20 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 'sleep_quality',
+    order: 4,
     text: 'How would you rate your sleep quality?',
-    type: 'scale',
+    type: 'single_choice',
     dimension: 'sleep',
-    options: Array.from({ length: 10 }, (_, i) => ({
-      value: String(i + 1),
-      label: String(i + 1),
-    })),
+    options: [
+      { value: 'poor', label: 'Poor' },
+      { value: 'fair', label: 'Fair' },
+      { value: 'good', label: 'Good' },
+      { value: 'excellent', label: 'Excellent' },
+    ],
   },
   {
     id: 'available_time',
+    order: 5,
     text: 'How much time do you have available for your session?',
     type: 'single_choice',
     dimension: 'time',
@@ -59,6 +68,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 'primary_goal',
+    order: 6,
     text: 'What is your primary goal?',
     type: 'single_choice',
     dimension: 'goal',
@@ -71,14 +81,16 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     ],
   },
   {
-    id: 'exercise_experience',
-    text: 'How would you describe your exercise experience?',
+    id: 'activity_level',
+    order: 7,
+    text: 'How would you describe your current activity level?',
     type: 'single_choice',
-    dimension: 'experience',
+    dimension: 'activity',
     options: [
-      { value: 'beginner', label: 'Beginner' },
-      { value: 'intermediate', label: 'Intermediate' },
-      { value: 'advanced', label: 'Advanced' },
+      { value: 'sedentary', label: 'Sedentary' },
+      { value: 'lightly_active', label: 'Lightly Active' },
+      { value: 'moderately_active', label: 'Moderately Active' },
+      { value: 'very_active', label: 'Very Active' },
     ],
   },
 ];
