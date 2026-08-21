@@ -3,8 +3,8 @@
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
-import { assignPathway } from '@/lib/assessment/pathway-mapper'
-import type { AssessmentResponse, AssessmentResponseMap } from '@/lib/assessment/types'
+import { mapToPathway } from '@/lib/assessment/pathway-mapper'
+import type { AssessmentResponse } from '@/lib/assessment/types'
 
 /**
  * Server action that receives assessment responses, stores them in the
@@ -34,14 +34,8 @@ export async function submitAssessment(responses: AssessmentResponse[]) {
     throw new Error('Failed to save assessment')
   }
 
-  // Build a response map for the pathway mapper
-  const responseMap: AssessmentResponseMap = {}
-  for (const r of responses) {
-    responseMap[r.questionId] = r.value
-  }
-
   // Determine pathway assignment based on responses
-  const pathwayId = assignPathway(responseMap)
+  const pathwayId = mapToPathway(responses)
 
   // Create user program linking user to their assigned pathway
   const { error: programError } = await supabase.from('user_programs').insert({
